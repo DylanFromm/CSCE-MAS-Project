@@ -1,16 +1,40 @@
 <repast.simphony.visualization.engine.CartesianDisplayDescriptor>
-  <name>Dull Birds Only</name>
+  <name>Birds</name>
   <type>2D</type>
   <styles>
     <entry>
+      <string>flocking_Birds.Predator_Bird</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
+    </entry>
+    <entry>
+      <string>flocking_Birds.Obstacle</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
+    </entry>
+    <entry>
       <string>flocking_Birds.Dull_Bird</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
+    </entry>
+    <entry>
+      <string>flocking_Birds.Smart_Bird</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
     </entry>
   </styles>
   <editedStyles>
     <entry>
+      <string>flocking_Birds.Predator_Bird</string>
+      <string>flocking_Birds.Predator_Bird.style_1.xml</string>
+    </entry>
+    <entry>
+      <string>flocking_Birds.Obstacle</string>
+      <string>flocking_Birds.Obstacle.style_2.xml</string>
+    </entry>
+    <entry>
       <string>flocking_Birds.Dull_Bird</string>
-      <string>flocking_Birds.Dull_Bird.style_0.xml</string>
+      <string>flocking_Birds.Dull_Bird.style_3.xml</string>
+    </entry>
+    <entry>
+      <string>flocking_Birds.Smart_Bird</string>
+      <string>flocking_Birds.Smart_Bird.style_1.xml</string>
     </entry>
   </editedStyles>
   <netStyles/>
@@ -23,14 +47,26 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>-1874600904</hashCode>
+    <hashCode>1745908270</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>space</layoutProjection>
   <layoutInterval>0</layoutInterval>
   <layerOrder>
     <entry>
+      <string>flocking_Birds.Predator_Bird</string>
+      <int>1</int>
+    </entry>
+    <entry>
+      <string>flocking_Birds.Obstacle</string>
+      <int>2</int>
+    </entry>
+    <entry>
       <string>flocking_Birds.Dull_Bird</string>
+      <int>3</int>
+    </entry>
+    <entry>
+      <string>flocking_Birds.Smart_Bird</string>
       <int>0</int>
     </entry>
   </layerOrder>

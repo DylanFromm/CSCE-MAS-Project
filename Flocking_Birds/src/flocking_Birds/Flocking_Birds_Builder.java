@@ -18,10 +18,10 @@ import repast.simphony.space.grid.WrapAroundBorders;
 
 public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 	//If bool = true, object will be spawned. if bool = false object will not be spawned.
-	boolean spawn_dull_birds = true;
-	boolean spawn_smart_birds = false;
-	boolean spawn_predator_birds = false;
-	boolean spawn_obstacles = true;
+	public static boolean spawn_dull_birds = true;
+	public static boolean spawn_smart_birds = false;
+	public static boolean spawn_predator_birds = true;
+	public static boolean spawn_obstacles = false;
 	//Context is a named set of agents.
 	@Override
 	public Context build(Context<Object> context) {
@@ -71,7 +71,20 @@ public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 			
 		}
 		if(spawn_predator_birds){
-			
+			int predator_birdCount = 2;
+			for(int i = 0; i < predator_birdCount; i++){
+				double x_vect = RandomHelper.nextDoubleFromTo(-1, 1);
+				double y_vect = Math.sqrt((1 - Math.pow(x_vect, 2)));
+				double y_mult = RandomHelper.nextDoubleFromTo(-1, 1);
+				if(y_mult < 0){
+					y_vect = y_vect * -1;
+				}else{
+					y_vect = y_vect * 1;
+				}
+
+				double Velo_Vect[] = {x_vect, y_vect};
+				context.add(new Predator_Bird(space, grid, Velo_Vect));
+			}
 		}
 		if(spawn_obstacles){
 			int obstacle_count = 5;
