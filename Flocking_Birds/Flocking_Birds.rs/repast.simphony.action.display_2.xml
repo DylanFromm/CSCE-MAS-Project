@@ -1,7 +1,11 @@
 <repast.simphony.visualization.engine.CartesianDisplayDescriptor>
-  <name>Dull Birds Only</name>
+  <name>Dull and Obstacles</name>
   <type>2D</type>
   <styles>
+    <entry>
+      <string>flocking_Birds.Obstacle</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
+    </entry>
     <entry>
       <string>flocking_Birds.Dull_Bird</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
@@ -9,8 +13,12 @@
   </styles>
   <editedStyles>
     <entry>
+      <string>flocking_Birds.Obstacle</string>
+      <string>flocking_Birds.Obstacle.style_0.xml</string>
+    </entry>
+    <entry>
       <string>flocking_Birds.Dull_Bird</string>
-      <string>flocking_Birds.Dull_Bird.style_0.xml</string>
+      <string>flocking_Birds.Dull_Bird.style_1.xml</string>
     </entry>
   </editedStyles>
   <netStyles/>
@@ -30,8 +38,12 @@
   <layoutInterval>0</layoutInterval>
   <layerOrder>
     <entry>
-      <string>flocking_Birds.Dull_Bird</string>
+      <string>flocking_Birds.Obstacle</string>
       <int>0</int>
+    </entry>
+    <entry>
+      <string>flocking_Birds.Dull_Bird</string>
+      <int>1</int>
     </entry>
   </layerOrder>
   <projections>

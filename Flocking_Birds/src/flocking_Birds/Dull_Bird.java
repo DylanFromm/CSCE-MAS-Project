@@ -39,7 +39,7 @@ public class Dull_Bird {
 				Dull_Bird.class, 2, 2);
 		
 		//Import repast.simphony.query.space.grid.GridCell
-		List<GridCell<Dull_Bird>> gridCells = dull_nghCreator.getNeighborhood(true);		SimUtilities.shuffle(gridCells, RandomHelper.getUniform());
+		List<GridCell<Dull_Bird>> gridCells = dull_nghCreator.getNeighborhood(true);
 		SimUtilities.shuffle(gridCells, RandomHelper.getUniform());
 		GridPoint pointWithLeastBirds = null;
 		int minCount = 1;
