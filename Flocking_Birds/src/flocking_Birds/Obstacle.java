@@ -44,5 +44,26 @@ public class Obstacle {
 				}
 			}
 		}
+		for(GridCell<Smart_Bird> cell : gridCellsS){
+			if(cell.size() > 0){
+				GridPoint pt2 = cell.getPoint();
+				Object obj = grid.getObjectAt(pt2.getX(), pt2.getY());
+				if(obj != this){
+					Context<Object> context = ContextUtils.getContext(obj);
+					context.remove(obj);
+				}
+			}
+		}
+		for(GridCell<Predator_Bird> cell : gridCellsP){
+			if(cell.size() > 0){
+				GridPoint pt2 = cell.getPoint();
+				Object obj = grid.getObjectAt(pt2.getX(), pt2.getY());
+				if(obj != this){
+					Context<Object> context = ContextUtils.getContext(obj);
+					context.remove(obj);
+				}
+			}
+		}
+		
 	}
 }
