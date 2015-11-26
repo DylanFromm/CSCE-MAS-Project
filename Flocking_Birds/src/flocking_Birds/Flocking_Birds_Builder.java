@@ -20,8 +20,17 @@ public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 	//If bool = true, object will be spawned. if bool = false object will not be spawned.
 	public static boolean spawn_dull_birds = true;
 	public static boolean spawn_smart_birds = false;
-	public static boolean spawn_predator_birds = true;
+	public static boolean spawn_predator_birds = false;
 	public static boolean spawn_obstacles = false;
+	public static boolean spawn_food = true;
+	
+	//Number of agents
+	int dull_birdCount = 50;
+	int smart_birdCount = 50;
+	int predator_birdCount = 2;
+	int obstacle_count = 5;
+	int food_count = 1;
+	
 	//Context is a named set of agents.
 	@Override
 	public Context build(Context<Object> context) {
@@ -51,7 +60,7 @@ public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 		
 		//populate the space with dull birds
 		if(spawn_dull_birds){
-			int dull_birdCount = 50;
+			
 			for(int i = 0; i < dull_birdCount; i++){
 				double angle = RandomHelper.nextDoubleFromTo(0, 2*Math.PI);
 				context.add(new Dull_Bird(space, grid, angle));
@@ -62,16 +71,22 @@ public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 			
 		}
 		if(spawn_predator_birds){
-			int predator_birdCount = 2;
+			
 			for(int i = 0; i < predator_birdCount; i++){
 				double angle = RandomHelper.nextDoubleFromTo(0, 2*Math.PI);
 				context.add(new Predator_Bird(space, grid, angle));
 			}
 		}
 		if(spawn_obstacles){
-			int obstacle_count = 5;
+			
 			for(int i = 0; i < obstacle_count; i++){
 				context.add(new Obstacle(space, grid));
+			}
+		}
+		if(spawn_food){
+			
+			for(int i = 0; i < food_count; i++){
+				context.add(new Food(space, grid));
 			}
 		}
 		//move agents

@@ -34,6 +34,8 @@ public class Dull_Bird {
 		double maxCountPred = -1;
 		GridPoint pointWithMostObstacles = null;
 		double maxCountObs = -1;
+		GridPoint pointWithFood = null;
+		double maxCountFood = -1;
 		
 		//Get the grid location of this Bot
 		GridPoint pt = grid.getLocation(this);
@@ -66,9 +68,8 @@ public class Dull_Bird {
 			for(GridCell<Predator_Bird> cell : gridCellsPredator){
 				if(cell.size() > maxCountPred){
 					pointWithMostPredBirds = cell.getPoint();
-					if(!pointWithMostPredBirds.equals(grid.getLocation(this))){
-						maxCountPred = cell.size();
-					}
+					maxCountPred = cell.size();
+					
 				}
 			}
 			
@@ -88,17 +89,31 @@ public class Dull_Bird {
 			for(GridCell<Obstacle> cell : gridCellsObstacle){
 				if(cell.size() > maxCountObs){
 					pointWithMostObstacles = cell.getPoint();
-					if(!pointWithMostObstacles.equals(grid.getLocation(this))){
-						maxCountObs = cell.size();
-					}
+					maxCountObs = cell.size();
+					
 				}
 			}
 			
 		}
+		if(Flocking_Birds_Builder.spawn_food){
+			GridCellNgh<Food> food_nghCreator = new GridCellNgh<Food>(grid, pt,
+					Food.class, 5, 5);
+			List<GridCell<Food>> gridCellsFood = food_nghCreator.getNeighborhood(true);
+			SimUtilities.shuffle(gridCellsFood, RandomHelper.getUniform());
+			
+			
+			for(GridCell<Food> cell : gridCellsFood){
+				if(cell.size() > maxCountFood){
+					pointWithFood = cell.getPoint();
+					maxCountFood = cell.size();
+					
+				}
+			}
+		}
 	
 		
-		if(maxCountDull > 0 || maxCountPred > 0 || maxCountObs > 0){
-			moveTowards(pointWithMostBirds, pointWithMostObstacles, pointWithMostPredBirds);
+		if(maxCountDull > 0 || maxCountPred > 0 || maxCountObs > 0 || maxCountFood > 0){
+			moveTowards(pointWithMostBirds, pointWithMostObstacles, pointWithMostPredBirds, pointWithFood, maxCountDull, maxCountObs, maxCountPred,maxCountFood);
 			//move();
 		}else{
 			move();
@@ -116,7 +131,7 @@ public class Dull_Bird {
 	}
 	
 	
-	public void moveTowards(GridPoint ptdull, GridPoint ptobs, GridPoint ptpred){
+	public void moveTowards(GridPoint ptdull, GridPoint ptobs, GridPoint ptpred, GridPoint ptfood, double maxCountDull, double maxCountObs, double maxCountPred, double maxCountFood){
 		//only move if we are not already in this grid location
 		//if(!pt.equals(grid.getLocation(this))){
 			double i = 1.0;
@@ -127,22 +142,40 @@ public class Dull_Bird {
 			NdPoint otherPointDull = new NdPoint(ptdull.getX(), ptdull.getY());
 			
 			//Calculate the angle for the bird to move to get to new point
-			double angle_new = SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointDull) - Math.PI;
-
-			if(Flocking_Birds_Builder.spawn_obstacles && ptobs != null){
-				NdPoint otherPointObs = new NdPoint(ptobs.getX(), ptobs.getY());
-				angle_new = (angle_new + (SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointObs) - Math.PI));
+			double angle_new = this.angle;
+			if(maxCountDull > 0){
+				angle_new = SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointDull) - Math.PI;
 				i++;
+			}
+			if(Flocking_Birds_Builder.spawn_obstacles && maxCountObs > 0){
+				NdPoint otherPointObs = new NdPoint(ptobs.getX(), ptobs.getY());
+				if(i == 2){
+					angle_new = (angle_new + (SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointObs) - Math.PI))/2.0;
+				}else{
+					angle_new = (SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointObs) - Math.PI);
+				}
 			}
 			
-			if(Flocking_Birds_Builder.spawn_predator_birds && ptpred != null){
+			if(Flocking_Birds_Builder.spawn_predator_birds && maxCountPred > 0){
 				NdPoint otherPointPred = new NdPoint(ptpred.getX(), ptpred.getY());
-				angle_new = (angle_new + (SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointPred) - Math.PI));
-				i++;
+				if(i == 2){
+					angle_new = (angle_new + (SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointPred) - Math.PI))/2.0;
+				}else{
+					angle_new = (SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointPred) - Math.PI);
+				}
 			}
-			angle_new = angle_new/i;
+			
+			if(Flocking_Birds_Builder.spawn_food && maxCountFood > 0){
+				NdPoint otherPointFood = new NdPoint(ptfood.getX(), ptfood.getY());
+				if(i == 2){
+					angle_new = (angle_new + (SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointFood)))/2.0;
+				}else{
+					angle_new = (SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointFood));
+				}
+			}
 			
 			this.angle = (6*this.angle + angle_new)/7.0;
+			
 			//Moves bird along calculated angle, by 1 space
 			space.moveByVector(this, 1, this.angle,0);
 			
