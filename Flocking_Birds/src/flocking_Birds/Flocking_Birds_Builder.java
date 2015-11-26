@@ -20,7 +20,7 @@ public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 	//If bool = true, object will be spawned. if bool = false object will not be spawned.
 	public static boolean spawn_dull_birds = true;
 	public static boolean spawn_smart_birds = false;
-	public static boolean spawn_predator_birds = false;
+	public static boolean spawn_predator_birds = true;
 	public static boolean spawn_obstacles = false;
 	//Context is a named set of agents.
 	@Override

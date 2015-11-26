@@ -98,7 +98,7 @@ public class Predator_Bird {
 		
 			//Calculate the angle for the bird to move to get to new point
 			double angle_new = SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPoint);
-			this.angle = (angle_new + this.angle)/2.0;
+			this.angle = (angle_new + 3*this.angle)/4.0;
 			//Moves bird along calculated angle, by 1 space
 			space.moveByVector(this, 1, this.angle,0);
 					
