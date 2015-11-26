@@ -22,10 +22,10 @@ public class Predator_Bird {
 	private boolean moved = false;
 	private double angle;
 	
-	public Predator_Bird(ContinuousSpace<Object> space, Grid<Object> grid, double Velocity[]){
+	public Predator_Bird(ContinuousSpace<Object> space, Grid<Object> grid, double angle){
 		this.space =  space;
 		this.grid = grid;
-		this.angle = Math.atan(Velocity[1]/Velocity[0]);
+		this.angle = angle;
 	}
 	//When and how often this method will be called. will be called every time step
 	@ScheduledMethod(start = 1, interval = 1)

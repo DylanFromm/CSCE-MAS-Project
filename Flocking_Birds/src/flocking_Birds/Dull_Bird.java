@@ -20,12 +20,12 @@ public class Dull_Bird {
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
 	private boolean moved = false;
-	private double Velocity[];
+	private double angle;
 	
-	public Dull_Bird(ContinuousSpace<Object> space, Grid<Object> grid, double Velocity[]){
+	public Dull_Bird(ContinuousSpace<Object> space, Grid<Object> grid, double angle){
 		this.space =  space;
 		this.grid = grid;
-		this.Velocity = Velocity;
+		this.angle = angle;
 	}
 	//When and how often this method will be called. will be called every time step
 	@ScheduledMethod(start = 1, interval = 1)
@@ -41,21 +41,26 @@ public class Dull_Bird {
 		//Import repast.simphony.query.space.grid.GridCell
 		List<GridCell<Dull_Bird>> gridCells = dull_nghCreator.getNeighborhood(true);
 		SimUtilities.shuffle(gridCells, RandomHelper.getUniform());
-		GridPoint pointWithLeastBirds = null;
-		int minCount = 1;
+		GridPoint pointWithMostBirds = null;
+		double maxCount = -1;
 		for(GridCell<Dull_Bird> cell : gridCells){
-			if(cell.size() < minCount){
-				pointWithLeastBirds = cell.getPoint();
-				minCount = cell.size();
+			if(cell.size() > maxCount){
+				pointWithMostBirds = cell.getPoint();
+				if(!pointWithMostBirds.equals(grid.getLocation(this))){
+					maxCount = cell.size();
+				}
 			}
 		}
-		//moveTowards(pointWithLeastBirds);
-		move();
+		if(maxCount > 0){
+			moveTowards(pointWithMostBirds);
+			//move();
+		}else{
+			move();
+		}
 		dull_collision();
 	}
 	public void move(){
-		double angle = Math.atan(this.Velocity[1]/this.Velocity[0]);
-		space.moveByVector(this, 1, angle,0);
+		space.moveByVector(this, 1, this.angle,0);
 		NdPoint myPoint = space.getLocation(this);
 		myPoint = space.getLocation(this);
 		grid.moveTo(this, (int)myPoint.getX(), (int)myPoint.getY());
@@ -63,7 +68,7 @@ public class Dull_Bird {
 	}
 	public void moveTowards(GridPoint pt){
 		//only move if we are not already in this grid location
-		if(!pt.equals(grid.getLocation(this))){
+		//if(!pt.equals(grid.getLocation(this))){
 			//Get birds location as a point, NdPoint stores its coordinates as doubles.
 			NdPoint myPoint = space.getLocation(this);
 			
@@ -71,10 +76,11 @@ public class Dull_Bird {
 			NdPoint otherPoint = new NdPoint(pt.getX(), pt.getY());
 			
 			//Calculate the angle for the bird to move to get to new point
-			double angle = SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPoint);
-			
+			double angle_new = SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPoint);
+			//angle_new = Math.toRadians(Math.toDegrees(angle_new)+180);
+			this.angle = (3*this.angle + (angle_new - Math.PI))/4.0;
 			//Moves bird along calculated angle, by 1 space
-			space.moveByVector(this, 1, angle,0);
+			space.moveByVector(this, 1, this.angle,0);
 			
 			//Updates the birds position in the grid by converting its locaiton in
 			//continuous space to int coordinates appropriate for a grid.
@@ -82,7 +88,7 @@ public class Dull_Bird {
 			grid.moveTo(this, (int)myPoint.getX(), (int)myPoint.getY());
 			
 			moved = true;
-		}
+		//}
 	}
 	public void dull_collision(){
 		GridPoint pt = grid.getLocation(this);
