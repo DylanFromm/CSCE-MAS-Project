@@ -47,17 +47,14 @@ public class Smart_Bird {
 		SimUtilities.shuffle(sbSet, RandomHelper.getUniform());
 		double Av = 0;
 		double Cv = 0;
-		double Sv = 0;
+
 		move();
 		if(!sbSet.isEmpty()){
 			Av = Alignment(sbSet);
 			Cv = Cohesion(sbSet);
 			Separation(sbSet);
-			this.angle = Math.atan2((Math.sin(Av) + /*Math.sin(this.angle) +*/ Math.sin(Cv)/1000)/2,
-					(Math.cos(Av) + /*Math.cos(this.angle) +*/ Math.cos(Cv)/1000)/2);
-			//this.angle = Math.atan2((Math.sin(Av) + Math.sin(Cv))/2,(Math.cos(Av)+Math.cos(Cv))/2);
-			//this.angle = (Av + Cv)/2;
-			//this.angle = (this.angle + Av + Cv + Sv)/4;
+			this.angle = Math.atan2((Math.sin(Av) + /*Math.sin(this.angle) +*/ Math.sin(Cv))/2,
+					(Math.cos(Av) + /*Math.cos(this.angle) +*/ Math.cos(Cv))/2);
 			
 		}
 			
@@ -94,15 +91,22 @@ public class Smart_Bird {
 			NdPoint birdLoc = space.getLocation(sb);
 			double xval = Math.abs(thisLoc.getX() - birdLoc.getX());
 			double yval = Math.abs(thisLoc.getY() - birdLoc.getY());
-			avgdistance = avgdistance + Math.hypot(xval, yval)/2;
-			AvgUnitVectX = AvgUnitVectX + (xval/magnitude(xval, yval));
-			AvgUnitVectY = AvgUnitVectY + (yval/magnitude(xval, yval));
+			if(Math.hypot(xval, yval) < 6 ){
+				avgdistance = avgdistance + Math.hypot(xval, yval)/2;
+				AvgUnitVectX = AvgUnitVectX + (xval/magnitude(xval, yval));
+				AvgUnitVectY = AvgUnitVectY + (yval/magnitude(xval, yval));
+			}
 		}
 		avgdistance = avgdistance/smartBs.size();
 		AvgUnitVectX = AvgUnitVectX/smartBs.size();
 		AvgUnitVectY = AvgUnitVectY/smartBs.size();
+		double avgdirection = Math.atan2(AvgUnitVectY, AvgUnitVectX);
 		if(avgdistance > distance){
-			return Math.atan2(AvgUnitVectY, AvgUnitVectX);
+			NdPoint pt = space.getLocation(this);
+			double moveX = pt.getX() + Math.cos(avgdirection)*.2;
+			double moveY = pt.getY() + Math.sin(avgdirection)*.2;
+			space.moveTo(this, moveX, moveY);
+			return avgdirection;
 		}else{
 			return this.angle;
 		}
@@ -120,21 +124,24 @@ public class Smart_Bird {
 			double yval = thisLoc.getY() - birdLoc.getY();
 			if(Math.hypot(xval, yval) < closestDistance){
 				closestBirdLoc = birdLoc;
+				closestDistance = Math.hypot(xval, yval);
 			}
 		}
-		if(closestDistance < distance * .75){
+		if(closestDistance < distance * .5){
 			angle_new = (SpatialMath.calcAngleFor2DMovement(space, thisLoc, closestBirdLoc) - Math.PI)%(2*Math.PI);
-			space.moveByVector(this, .5, angle_new);
+			NdPoint pt = space.getLocation(this);
+			double moveX = pt.getX() + Math.cos(angle_new)*.2;
+			double moveY = pt.getY() + Math.sin(angle_new)*.2;
+			space.moveTo(this, moveX, moveY);
 		}
 
 	}
+
 	//move towards a different point.
 	public double Alignment(List<Smart_Bird> smartBs){
-		NdPoint thisLoc = space.getLocation(this);
 		double AvgUnitVectX = Math.cos(this.angle);
 		double AvgUnitVectY = Math.sin(this.angle);
 		for(Smart_Bird sb : smartBs){
-			NdPoint birdLoc = space.getLocation(sb);
 			double xval = Math.cos(sb.angle);
 			double yval = Math.sin(sb.angle);
 			AvgUnitVectX = AvgUnitVectX + (xval/magnitude(xval, yval));
