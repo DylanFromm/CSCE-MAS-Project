@@ -18,15 +18,15 @@ import repast.simphony.space.grid.WrapAroundBorders;
 
 public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 	//If bool = true, object will be spawned. if bool = false object will not be spawned.
-	public static boolean spawn_dull_birds = true;
-	public static boolean spawn_smart_birds = false;
+	public static boolean spawn_dull_birds = false;
+	public static boolean spawn_smart_birds = true;
 	public static boolean spawn_predator_birds = false;
 	public static boolean spawn_obstacles = false;
-	public static boolean spawn_food = true;
+	public static boolean spawn_food = false;
 	
 	//Number of agents
 	int dull_birdCount = 50;
-	int smart_birdCount = 50;
+	int smart_birdCount = 100;
 	int predator_birdCount = 2;
 	int obstacle_count = 5;
 	int food_count = 1;
@@ -58,7 +58,7 @@ public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 						new SimpleGridAdder<Object>(),
 						true, 100, 100));
 		
-		//populate the space with dull birds
+		//populate the space with agents
 		if(spawn_dull_birds){
 			
 			for(int i = 0; i < dull_birdCount; i++){
@@ -68,7 +68,10 @@ public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 		}
 		
 		if(spawn_smart_birds){
-			
+			for(int i = 0; i < smart_birdCount; i++){
+				double angle = RandomHelper.nextDoubleFromTo(0, 2*Math.PI);
+				context.add(new Smart_Bird(space, grid, angle));
+			}
 		}
 		if(spawn_predator_birds){
 			
