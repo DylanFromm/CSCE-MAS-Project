@@ -22,8 +22,10 @@ public class Smart_Bird {
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
 	private boolean moved = false;
-	private double angle = 0;
+	public double angle = 0;
 	private int distance = 5;
+	public boolean predator_spotted = false;
+	public boolean predator_clear = true;
 	
 	public Smart_Bird(ContinuousSpace<Object> space, Grid<Object> grid, double angle){
 		this.space =  space;
@@ -35,33 +37,154 @@ public class Smart_Bird {
 	public void step(){
 		//Get the grid location of this Bot
 		GridPoint pt = grid.getLocation(this);
-			
 		//use the GridCellNgh class to create GridCells for the surrounding
 		//neighborhood
 		MooreQuery<Smart_Bird> smartquery = new MooreQuery(grid, this, 5, 5);
 		Iterator<Smart_Bird> siter = smartquery.query().iterator();
 		ArrayList<Smart_Bird> sbSet = new ArrayList<Smart_Bird>();
 		while(siter.hasNext()){
-			sbSet.add(siter.next());
+			Object obj = siter.next();
+			if(obj instanceof Smart_Bird){
+				sbSet.add((Smart_Bird) obj);
+			}
 		}
 		SimUtilities.shuffle(sbSet, RandomHelper.getUniform());
 		double Av = 0;
 		double Cv = 0;
-
-		move();
-		if(!sbSet.isEmpty()){
-			Av = Alignment(sbSet);
-			Cv = Cohesion(sbSet);
-			Separation(sbSet);
-			this.angle = Math.atan2((Math.sin(Av) + /*Math.sin(this.angle) +*/ Math.sin(Cv))/2,
-					(Math.cos(Av) + /*Math.cos(this.angle) +*/ Math.cos(Cv))/2);
+		if(Flocking_Birds_Builder.spawn_predator_birds){
+			MooreQuery<Predator_Bird> predquery = new MooreQuery(grid, this, 5, 5);
+			Iterator<Predator_Bird> piter = predquery.query().iterator();
+			ArrayList<Predator_Bird> pdSet = new ArrayList<Predator_Bird>();
+			while(piter.hasNext()){
+				Object obj = piter.next();
+				if(obj instanceof Predator_Bird){
+					pdSet.add((Predator_Bird) obj);
+				}
+			}
+			SimUtilities.shuffle(pdSet, RandomHelper.getUniform());
+			if(!pdSet.isEmpty()){
+				Predator_Spotted(sbSet, pdSet);
+			}else if(pdSet.isEmpty() && predator_spotted){
+				predator_clear = true;
+				boolean clear = true;
+				for(Smart_Bird sb : sbSet){
+					clear &= sb.predator_spotted;
+				}
+				if(clear){
+					predator_spotted = false;
+				}
+			}
+			
+			if(predator_spotted){
+				Predator_Signal(sbSet);
+				Separation(sbSet);
+				move();
+			}else{
+				move();
+				if(!sbSet.isEmpty()){
+					Av = Alignment(sbSet);
+					Cv = Cohesion(sbSet);
+					Separation(sbSet);
+					this.angle = Math.atan2((Math.sin(Av) +  Math.sin(Cv))/2,
+								(Math.cos(Av) + Math.cos(Cv))/2);
+				}
+			}
 			
 		}
+		if(Flocking_Birds_Builder.spawn_obstacles){
+			MooreQuery<Obstacle> obsquery = new MooreQuery(grid, this, 6, 6);
+			Iterator<Obstacle> oiter = obsquery.query().iterator();
+			ArrayList<Obstacle> obsSet = new ArrayList<Obstacle>();
+			while(oiter.hasNext()){
+				Object obj = oiter.next();
+				if(obj instanceof Obstacle){
+					obsSet.add((Obstacle) obj);
+				}
+			}
+			SimUtilities.shuffle(obsSet, RandomHelper.getUniform());
+			NdPoint thisLoc = space.getLocation(this);
+			if(!obsSet.isEmpty()){
+				if(this.angle > Math.PI && this.angle <= 2*Math.PI){
+					this.angle = -1*(this.angle - Math.PI);
+				}
+				
+				for(Obstacle ob : obsSet){
+					NdPoint obLoc = space.getLocation(ob);
+					//get angle from the object to the bird.
+					double angleto = SpatialMath.calcAngleFor2DMovement(space, thisLoc, obLoc);
+					if(IsWithin(angleto+0.34906588779848602, angleto-0.34906588779848602, this.angle)){
+						double dist1 = Math.hypot(thisLoc.getX() - Math.cos(angleto+0.34906588779848602), thisLoc.getY() - Math.sin(angleto+0.34906588779848602));
+						double dist2 = Math.hypot(thisLoc.getX() - Math.cos(angleto-0.34906588779848602), thisLoc.getY() - Math.sin(angleto-0.34906588779848602));
+						if(dist1 <= dist2){
+							this.angle += 4*0.34906588779848602;
+						}else{
+							this.angle -= 4*0.34906588779848602;
+						}
+					}
+					Av = Alignment(sbSet);
+					Cv = Cohesion(sbSet);
+					Separation(sbSet);
+					this.angle = Math.atan2((Math.sin(Av) + Math.sin(this.angle) +  Math.sin(Cv))/3,
+								(Math.cos(Av) + Math.cos(Cv) + Math.cos(this.angle))/3);
+					move();
+					
+				}
 			
+				
+				
+				
+			}else{
+				move();
+				if(!sbSet.isEmpty()){
+					Av = Alignment(sbSet);
+					Cv = Cohesion(sbSet);
+					Separation(sbSet);
+					this.angle = Math.atan2((Math.sin(Av) +  Math.sin(Cv))/2,
+								(Math.cos(Av) + Math.cos(Cv))/2);
+				}
+			}
+		}
+		if(Flocking_Birds_Builder.spawn_food){
+			MooreQuery<Food> foodquery = new MooreQuery(grid, this, 5, 5);
+			Iterator<Food> fiter = foodquery.query().iterator();
+			ArrayList<Food> pdSet = new ArrayList<Food>();
+			while(fiter.hasNext()){
+				pdSet.add(fiter.next());
+			}
+			SimUtilities.shuffle(pdSet, RandomHelper.getUniform());
+		}
+		
+
+		
+		if(!Flocking_Birds_Builder.spawn_predator_birds && !Flocking_Birds_Builder.spawn_food && !Flocking_Birds_Builder.spawn_obstacles){
+			move();
+			if(!sbSet.isEmpty()){
+				Av = Alignment(sbSet);
+				Cv = Cohesion(sbSet);
+				Separation(sbSet);
+				this.angle = Math.atan2((Math.sin(Av) +  Math.sin(Cv))/2,
+							(Math.cos(Av) + Math.cos(Cv))/2);
+			}	
+		}
 	
 		moved = true;
 		smart_collision();
 
+	}
+	public boolean IsWithin(double angle1, double angle2, double angleinquest){
+		if(angle1 <= angle2){
+			if(angleinquest <= angle2 && angleinquest >= angle1){
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			if(angleinquest <= angle1 && angleinquest >= angle2){
+				return true;
+			}else{
+				return false;
+			}
+		}
 	}
 		
 	//Standard move command, stays on the same course as before.
@@ -71,6 +194,33 @@ public class Smart_Bird {
 		myPoint = space.getLocation(this);
 		grid.moveTo(this, (int)myPoint.getX(), (int)myPoint.getY());
 		moved = true;
+	}
+	public void Predator_Signal(List<Smart_Bird> smartBs){
+		for(Smart_Bird sb : smartBs){
+			sb.angle = Math.atan2((Math.sin(this.angle) + Math.sin(sb.angle))/2, (Math.cos(this.angle) + Math.cos(sb.angle)/2));
+			sb.predator_spotted = true;
+		}
+	}
+	public void Predator_Spotted(List<Smart_Bird> smartBs, List<Predator_Bird> predBs){
+		predator_spotted = true;
+		predator_clear = false;
+		double predx = 0;
+		double predy = 0;
+		int i = 1;
+		NdPoint thisLoc = space.getLocation(this);
+		for(Predator_Bird pd : predBs){
+			NdPoint predLoc = space.getLocation(pd);
+			predx = predx + Math.cos((SpatialMath.calcAngleFor2DMovement(space, thisLoc, predLoc) - Math.PI)%(2*Math.PI));
+			predy = predy + Math.sin((SpatialMath.calcAngleFor2DMovement(space, thisLoc, predLoc) - Math.PI)%(2*Math.PI));
+			i++;
+		}
+		predx = predx/i;
+		predy = predy/i;
+		this.angle = Math.atan2((predy + Math.sin(this.angle))/2, (predx + Math.cos(this.angle)/2));
+		for(Smart_Bird sb : smartBs){
+			sb.angle = Math.atan2((predy + Math.sin(sb.angle))/2, (predx + Math.cos(sb.angle)/2));
+			sb.predator_spotted = true;
+		}
 	}
 
 	public double magnitude(double x, double y){
