@@ -26,6 +26,7 @@ public class Smart_Bird {
 	private int distance = 5;
 	public boolean predator_spotted = false;
 	public boolean predator_clear = true;
+	public boolean food_spotted = false;
 	
 	public Smart_Bird(ContinuousSpace<Object> space, Grid<Object> grid, double angle){
 		this.space =  space;
@@ -147,11 +148,26 @@ public class Smart_Bird {
 		if(Flocking_Birds_Builder.spawn_food){
 			MooreQuery<Food> foodquery = new MooreQuery(grid, this, 5, 5);
 			Iterator<Food> fiter = foodquery.query().iterator();
-			ArrayList<Food> pdSet = new ArrayList<Food>();
+			ArrayList<Food> fdSet = new ArrayList<Food>();
 			while(fiter.hasNext()){
-				pdSet.add(fiter.next());
+				Object obj = fiter.next();
+				if(obj instanceof Food){
+					fdSet.add((Food)obj);
+				}
 			}
-			SimUtilities.shuffle(pdSet, RandomHelper.getUniform());
+			SimUtilities.shuffle(fdSet, RandomHelper.getUniform());
+			if(!fdSet.isEmpty()){
+				Food_Spotted(sbSet, fdSet);
+			}
+			move();
+			if(!sbSet.isEmpty()){
+				
+				Av = Alignment(sbSet);
+				Cv = Cohesion(sbSet);
+				Separation(sbSet);
+				this.angle = Math.atan2((Math.sin(Av) +  Math.sin(Cv))/2,
+							(Math.cos(Av) + Math.cos(Cv))/2);
+			}
 		}
 		
 
@@ -220,6 +236,18 @@ public class Smart_Bird {
 		for(Smart_Bird sb : smartBs){
 			sb.angle = Math.atan2((predy + Math.sin(sb.angle))/2, (predx + Math.cos(sb.angle)/2));
 			sb.predator_spotted = true;
+		}
+	}
+	public void Food_Spotted(List<Smart_Bird> smartBs, List<Food> Food ){
+		food_spotted = true;
+		NdPoint thisLoc = space.getLocation(this);
+		for(Food fd : Food){
+			NdPoint fdLoc = space.getLocation(fd);
+			this.angle = SpatialMath.calcAngleFor2DMovement(space, thisLoc, fdLoc);
+		}
+		for(Smart_Bird sb : smartBs){
+			sb.angle = this.angle;
+			sb.food_spotted = true;
 		}
 	}
 

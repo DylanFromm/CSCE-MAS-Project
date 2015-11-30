@@ -18,16 +18,16 @@ import repast.simphony.space.grid.WrapAroundBorders;
 
 public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 	//If bool = true, object will be spawned. if bool = false object will not be spawned.
-	public static boolean spawn_dull_birds = false;
-	public static boolean spawn_smart_birds = true;
+	public static boolean spawn_dull_birds = true;
+	public static boolean spawn_smart_birds = false;
 	public static boolean spawn_predator_birds = false;
-	public static boolean spawn_obstacles = true;
-	public static boolean spawn_food = false;
+	public static boolean spawn_obstacles = false;
+	public static boolean spawn_food = true;
 	
 	//Number of agents
 	int environment_size = 100;
 	int dull_birdCount = 50;
-	int smart_birdCount = 100;
+	int smart_birdCount = 50;
 	int predator_birdCount = 3;
 	int obstacle_count = 3;
 	int food_count = 1;

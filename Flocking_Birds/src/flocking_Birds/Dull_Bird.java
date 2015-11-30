@@ -43,7 +43,7 @@ public class Dull_Bird {
 		//use the GridCellNgh class to create GridCells for the surrounding
 		//neighborhood
 		GridCellNgh<Dull_Bird> dull_nghCreator = new GridCellNgh<Dull_Bird>(grid, pt,
-				Dull_Bird.class, 2, 2);
+				Dull_Bird.class, 5, 5);
 		List<GridCell<Dull_Bird>> gridCellsDull = dull_nghCreator.getNeighborhood(true);
 		SimUtilities.shuffle(gridCellsDull, RandomHelper.getUniform());
 		GridPoint pointWithMostBirds = null;
@@ -60,7 +60,7 @@ public class Dull_Bird {
 		if(Flocking_Birds_Builder.spawn_predator_birds){
 			
 			GridCellNgh<Predator_Bird> predator_nghCreator = new GridCellNgh<Predator_Bird>(grid, pt,
-				Predator_Bird.class, 2, 2);
+				Predator_Bird.class, 5, 5);
 			List<GridCell<Predator_Bird>> gridCellsPredator = predator_nghCreator.getNeighborhood(true);
 			SimUtilities.shuffle(gridCellsPredator, RandomHelper.getUniform());
 			
@@ -80,7 +80,7 @@ public class Dull_Bird {
 		if(Flocking_Birds_Builder.spawn_obstacles){
 			
 			GridCellNgh<Obstacle> obstacle_nghCreator = new GridCellNgh<Obstacle>(grid, pt,
-					Obstacle.class, 3, 3);
+					Obstacle.class, 6, 6);
 			List<GridCell<Obstacle>> gridCellsObstacle = obstacle_nghCreator.getNeighborhood(true);
 			SimUtilities.shuffle(gridCellsObstacle, RandomHelper.getUniform());
 			
@@ -140,7 +140,7 @@ public class Dull_Bird {
 			
 			//Get new point's location
 			NdPoint otherPointDull = new NdPoint(ptdull.getX(), ptdull.getY());
-			
+			boolean obstacle = false;
 			//Calculate the angle for the bird to move to get to new point			double angle_new = this.angle;
 			double xunit_new = Math.cos(this.angle)*2;
 			double yunit_new = Math.sin(this.angle)*2;
@@ -151,8 +151,17 @@ public class Dull_Bird {
 			}
 			if(Flocking_Birds_Builder.spawn_obstacles && maxCountObs > 0){
 				NdPoint otherPointObs = new NdPoint(ptobs.getX(), ptobs.getY());
-				xunit_new = xunit_new + Math.cos(SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointObs) - Math.PI);
-				yunit_new = yunit_new + Math.sin(SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointObs) - Math.PI);
+				double angleto = SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointObs);
+				if(IsWithin(angleto+0.34906588779848602, angleto-0.34906588779848602, this.angle)){
+					double dist1 = Math.hypot(myPoint.getX() - Math.cos(angleto+0.34906588779848602), myPoint.getY() - Math.sin(angleto+0.34906588779848602));
+					double dist2 = Math.hypot(myPoint.getX() - Math.cos(angleto-0.34906588779848602), myPoint.getY() - Math.sin(angleto-0.34906588779848602));
+					obstacle = true;
+					if(dist1 <= dist2){
+						this.angle += .34906588779848602;
+					}else{
+						this.angle -= .34906588779848602;
+					}
+				}
 				i++;
 			}
 			
@@ -165,13 +174,13 @@ public class Dull_Bird {
 			
 			if(Flocking_Birds_Builder.spawn_food && maxCountFood > 0){
 				NdPoint otherPointFood = new NdPoint(ptfood.getX(), ptfood.getY());
-				xunit_new = xunit_new + Math.cos(SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointFood) - Math.PI);
-				yunit_new = yunit_new + Math.sin(SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointFood) - Math.PI);
+				xunit_new = xunit_new + Math.cos(SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointFood));
+				yunit_new = yunit_new + Math.sin(SpatialMath.calcAngleFor2DMovement(space, myPoint, otherPointFood));
 				i++;
 			}
-			
-			this.angle = Math.atan2(yunit_new/i, xunit_new/i);
-			
+			if(!obstacle){
+				this.angle = Math.atan2(yunit_new/i, xunit_new/i);
+			}
 			//Moves bird along calculated angle, by 1 space
 			space.moveByVector(this, 1, this.angle,0);
 			
@@ -197,6 +206,21 @@ public class Dull_Bird {
 				context.remove(obj);
 			}
 
+		}
+	}
+	public boolean IsWithin(double angle1, double angle2, double angleinquest){
+		if(angle1 <= angle2){
+			if(angleinquest <= angle2 && angleinquest >= angle1){
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			if(angleinquest <= angle1 && angleinquest >= angle2){
+				return true;
+			}else{
+				return false;
+			}
 		}
 	}
 }
