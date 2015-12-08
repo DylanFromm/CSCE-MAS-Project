@@ -206,6 +206,7 @@ public class Dull_Bird {
 			for(Object obj : dullBs){
 				Context<Object> context = ContextUtils.getContext(obj);
 				context.remove(obj);
+				Flocking_Birds_Builder.num_collisions++;
 			}
 
 		}

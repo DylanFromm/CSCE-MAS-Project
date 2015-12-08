@@ -154,4 +154,7 @@ public class Predator_Bird {
 			}
 		}
 	}
+	public int getEaten(){
+		return this.eaten;
+	}
 }

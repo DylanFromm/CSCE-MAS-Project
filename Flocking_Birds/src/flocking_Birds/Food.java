@@ -54,4 +54,7 @@ public class Food {
 			}
 		}
 	}
+	public int getLanded(){
+		return this.Landed_count;
+	}
 }

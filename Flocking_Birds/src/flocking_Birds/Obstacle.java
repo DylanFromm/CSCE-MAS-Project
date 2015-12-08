@@ -14,6 +14,7 @@ import repast.simphony.util.ContextUtils;
 public class Obstacle {
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
+	public int collisions = 0;
 	
 	public Obstacle(ContinuousSpace<Object> space, Grid<Object> grid){
 		this.space = space;
@@ -51,6 +52,7 @@ public class Obstacle {
 				if(obj != this){
 					Context<Object> context = ContextUtils.getContext(obj);
 					context.remove(obj);
+					this.collisions++;
 				}
 			}
 		}
@@ -65,5 +67,8 @@ public class Obstacle {
 			}
 		}
 		
+	}
+	public int getObstacleCollisions(){
+		return this.collisions;
 	}
 }

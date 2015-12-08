@@ -357,6 +357,7 @@ public class Smart_Bird {
 			for(Object obj : smartBs){
 				Context<Object> context = ContextUtils.getContext(obj);
 				context.remove(obj);
+				Flocking_Birds_Builder.num_collisions++;
 			}
 
 		}
