@@ -23,15 +23,17 @@ public class Smart_Bird {
 	private Grid<Object> grid;
 	private boolean moved = false;
 	public double angle = 0;
+	public int flock_flag = 0;
 	private int distance = 5;
 	public boolean predator_spotted = false;
 	public boolean predator_clear = true;
 	public boolean food_spotted = false;
 	
-	public Smart_Bird(ContinuousSpace<Object> space, Grid<Object> grid, double angle){
+	public Smart_Bird(ContinuousSpace<Object> space, Grid<Object> grid, double angle, int flock_flag){
 		this.space =  space;
 		this.grid = grid;
 		this.angle = angle;
+		this.flock_flag = flock_flag;
 	}
 	//When and how often this method will be called. will be called every time step
 	@ScheduledMethod(start = 1, interval = 1)
@@ -48,6 +50,9 @@ public class Smart_Bird {
 			if(obj instanceof Smart_Bird){
 				sbSet.add((Smart_Bird) obj);
 			}
+		}
+		if(sbSet.size()>1){
+			exchange_flag(sbSet);
 		}
 		SimUtilities.shuffle(sbSet, RandomHelper.getUniform());
 		double Av = 0;
@@ -184,7 +189,9 @@ public class Smart_Bird {
 		}
 	
 		moved = true;
-		smart_collision();
+		if(Flocking_Birds_Builder.collisions){
+			smart_collision();
+		}
 
 	}
 	public boolean IsWithin(double angle1, double angle2, double angleinquest){
@@ -348,5 +355,9 @@ public class Smart_Bird {
 
 		}
 	}
-
+	public void exchange_flag(List<Smart_Bird> smartBs){
+		for(Smart_Bird sb : smartBs){
+			sb.flock_flag = this.flock_flag;
+		}
+	}
 }

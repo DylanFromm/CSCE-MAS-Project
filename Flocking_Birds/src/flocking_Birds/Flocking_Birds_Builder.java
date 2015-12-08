@@ -18,19 +18,25 @@ import repast.simphony.space.grid.WrapAroundBorders;
 
 public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 	//If bool = true, object will be spawned. if bool = false object will not be spawned.
-	public static boolean spawn_dull_birds = true;
-	public static boolean spawn_smart_birds = false;
+	public static boolean spawn_dull_birds = false;
+	public static boolean spawn_smart_birds = true;
 	public static boolean spawn_predator_birds = false;
 	public static boolean spawn_obstacles = false;
-	public static boolean spawn_food = true;
+	public static boolean spawn_food = false;
+	public static boolean collisions = false;
+	
+	public static boolean hypothesis_I = true;
+	public static boolean hypothesis_II = false;
+	public static boolean hypothesis_III = false;
+	public static boolean hypothesis_IV = false;
 	
 	//Number of agents
-	int environment_size = 100;
-	int dull_birdCount = 50;
-	int smart_birdCount = 50;
-	int predator_birdCount = 3;
-	int obstacle_count = 3;
-	int food_count = 1;
+	public static int environment_size = 100;
+	public static int dull_birdCount = 50;
+	public static int smart_birdCount = 150;
+	public static int predator_birdCount = 3;
+	public static int obstacle_count = 3;
+	public static int food_count = 1;
 	
 	//Context is a named set of agents.
 	@Override
@@ -71,7 +77,8 @@ public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 		if(spawn_smart_birds){
 			for(int i = 0; i < smart_birdCount; i++){
 				double angle = RandomHelper.nextDoubleFromTo(0, 2*Math.PI);
-				context.add(new Smart_Bird(space, grid, angle));
+				int flock_flag = RandomHelper.nextIntFromTo(1, smart_birdCount);
+				context.add(new Smart_Bird(space, grid, angle,flock_flag));
 			}
 		}
 		if(spawn_predator_birds){
