@@ -118,7 +118,9 @@ public class Dull_Bird {
 		}else{
 			move();
 		}
-		dull_collision();
+		if(Flocking_Birds_Builder.collisions){
+			dull_collision();
+		}
 	}
 	
 	

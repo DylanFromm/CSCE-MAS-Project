@@ -14,7 +14,7 @@ import repast.simphony.util.ContextUtils;
 public class Food {
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
-	
+	public int Landed_count = 0;
 	public Food(ContinuousSpace<Object> space, Grid<Object> grid){
 		this.space = space;
 		this.grid = grid;
@@ -38,6 +38,7 @@ public class Food {
 				if(obj != this){
 					Context<Object> context = ContextUtils.getContext(obj);
 					context.remove(obj);
+					this.Landed_count++;
 				}
 			}
 		}
@@ -48,6 +49,7 @@ public class Food {
 				if(obj != this){
 					Context<Object> context = ContextUtils.getContext(obj);
 					context.remove(obj);
+					this.Landed_count++;
 				}
 			}
 		}
