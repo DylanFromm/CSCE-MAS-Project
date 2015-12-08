@@ -1,5 +1,7 @@
 package flocking_Birds;
 
+import java.util.ArrayList;
+
 import repast.simphony.context.Context;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactory;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
@@ -73,12 +75,15 @@ public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 				context.add(new Dull_Bird(space, grid, angle));
 			}
 		}
-		
+		ArrayList<Smart_Bird> sbSet = new ArrayList<Smart_Bird>();
 		if(spawn_smart_birds){
 			for(int i = 0; i < smart_birdCount; i++){
 				double angle = RandomHelper.nextDoubleFromTo(0, 2*Math.PI);
 				int flock_flag = RandomHelper.nextIntFromTo(1, smart_birdCount);
-				context.add(new Smart_Bird(space, grid, angle,flock_flag));
+				Smart_Bird sb = new Smart_Bird(space, grid, angle,flock_flag);
+				sbSet.add(sb);
+				context.add(sb);
+				
 			}
 		}
 		if(spawn_predator_birds){
@@ -100,6 +105,7 @@ public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 				context.add(new Food(space, grid));
 			}
 		}
+		context.add(new Testing(space, grid, sbSet));
 		//move agents
 		for(Object obj : context){
 			NdPoint pt = space.getLocation(obj);

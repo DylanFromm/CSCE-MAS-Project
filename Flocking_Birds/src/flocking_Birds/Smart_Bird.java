@@ -6,6 +6,7 @@ import java.util.List;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.essentials.RepastEssentials;
 import repast.simphony.query.space.grid.GridCell;
 import repast.simphony.query.space.grid.GridCellNgh;
 import repast.simphony.query.space.grid.MooreQuery;
@@ -29,6 +30,8 @@ public class Smart_Bird {
 	public boolean predator_clear = true;
 	public boolean food_spotted = false;
 	
+	private int tick = 1;
+	
 	public Smart_Bird(ContinuousSpace<Object> space, Grid<Object> grid, double angle, int flock_flag){
 		this.space =  space;
 		this.grid = grid;
@@ -38,6 +41,9 @@ public class Smart_Bird {
 	//When and how often this method will be called. will be called every time step
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step(){
+		if(RepastEssentials.GetTickCount() % 20 == 0){
+			this.flock_flag = RandomHelper.nextIntFromTo(1, 200);
+		}
 		//Get the grid location of this Bot
 		GridPoint pt = grid.getLocation(this);
 		//use the GridCellNgh class to create GridCells for the surrounding
