@@ -22,15 +22,15 @@ public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 	//If bool = true, object will be spawned. if bool = false object will not be spawned.
 	public static boolean spawn_dull_birds = true;
 	public static boolean spawn_smart_birds = false;
-	public static boolean spawn_predator_birds = false;
+	public static boolean spawn_predator_birds = true;
 	public static boolean spawn_obstacles = false;
-	public static boolean spawn_food = true;
+	public static boolean spawn_food = false;
 	public static boolean collisions = false;
 	
 	public static boolean hypothesis_I = false;
 	public static boolean hypothesis_II = false;
-	public static boolean hypothesis_III = false;
-	public static boolean hypothesis_IV = true;
+	public static boolean hypothesis_III = true;
+	public static boolean hypothesis_IV = false;
 	
 	//Number of agents
 	public static int environment_size = 100;

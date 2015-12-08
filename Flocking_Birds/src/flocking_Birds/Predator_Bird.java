@@ -21,6 +21,7 @@ public class Predator_Bird {
 	private Grid<Object> grid;
 	private boolean moved = false;
 	private double angle;
+	public int eaten = 0;
 	
 	public Predator_Bird(ContinuousSpace<Object> space, Grid<Object> grid, double angle){
 		this.space =  space;
@@ -128,7 +129,7 @@ public class Predator_Bird {
 					
 					Context<Object> context = ContextUtils.getContext(obj);
 					context.remove(obj);
-					
+					this.eaten++;
 				}
 
 			}	
@@ -147,7 +148,7 @@ public class Predator_Bird {
 					
 					Context<Object> context = ContextUtils.getContext(obj);
 					context.remove(obj);
-					
+					this.eaten++;
 				}
 
 			}
