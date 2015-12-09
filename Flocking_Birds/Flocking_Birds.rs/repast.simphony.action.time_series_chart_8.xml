@@ -1,0 +1,38 @@
+<repast.simphony.chart2.engine.TimeSeriesChartDescriptor>
+  <name>Number of Birds That have Found Food</name>
+  <dataSet>Food Found</dataSet>
+  <xAxisLabel>Tick Count</xAxisLabel>
+  <yAxisLabel>Birds at Food Source</yAxisLabel>
+  <chartTitle>Number of Birds That Have Found Food Over Time</chartTitle>
+  <type>TIME_SERIES</type>
+  <background>
+    <red>192</red>
+    <green>192</green>
+    <blue>192</blue>
+    <alpha>255</alpha>
+  </background>
+  <gridLineColor>
+    <red>255</red>
+    <green>255</green>
+    <blue>255</blue>
+    <alpha>255</alpha>
+  </gridLineColor>
+  <showGrid>true</showGrid>
+  <showLegend>true</showLegend>
+  <seriesIds>
+    <entry>
+      <string>Landed at Food</string>
+      <SeriesData>
+        <label>Landed at Food</label>
+        <color>
+          <red>0</red>
+          <green>0</green>
+          <blue>255</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+  </seriesIds>
+  <dataValueIds/>
+  <plotRangeLength>-1</plotRangeLength>
+</repast.simphony.chart2.engine.TimeSeriesChartDescriptor>

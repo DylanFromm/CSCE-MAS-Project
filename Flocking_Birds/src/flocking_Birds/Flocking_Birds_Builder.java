@@ -2,7 +2,6 @@ package flocking_Birds;
 
 import java.util.ArrayList;
 
-import javax.swing.JPanel;
 
 import repast.simphony.context.Context;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactory;
@@ -22,24 +21,24 @@ import repast.simphony.space.grid.WrapAroundBorders;
 
 public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 	//If bool = true, object will be spawned. if bool = false object will not be spawned.
-	public static boolean spawn_dull_birds = true;
-	public static boolean spawn_smart_birds = false;
+	public static boolean spawn_dull_birds = false;
+	public static boolean spawn_smart_birds = true;
 	public static boolean spawn_predator_birds = false;
-	public static boolean spawn_obstacles = false;
-	public static boolean spawn_food = true;
+	public static boolean spawn_obstacles = true;
+	public static boolean spawn_food = false;
 	public static boolean collisions = false;
 	
 	public static boolean hypothesis_I = false;
-	public static boolean hypothesis_II = false;
+	public static boolean hypothesis_II = true;
 	public static boolean hypothesis_III = false;
-	public static boolean hypothesis_IV = true;
+	public static boolean hypothesis_IV = false;
 	
 	//Number of agents
 	public static int environment_size = 100;
 	public static int dull_birdCount = 150;
 	public static int smart_birdCount = 150;
 	public static int predator_birdCount = 3;
-	public static int obstacle_count = 3;
+	public static int obstacle_count = 1;
 	public static int food_count = 1;
 	public static int num_collisions = 0;
 	
@@ -103,6 +102,7 @@ public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 			}
 		}
 		ArrayList<Obstacle> obSet = new ArrayList<Obstacle>();
+		
 		if(spawn_obstacles){
 			
 			for(int i = 0; i < obstacle_count; i++){
@@ -111,6 +111,7 @@ public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 				context.add(ob);
 			}
 		}
+		
 		ArrayList<Food> fdSet = new ArrayList<Food>();
 		if(spawn_food){
 			
@@ -129,8 +130,8 @@ public class Flocking_Birds_Builder implements ContextBuilder<Object> {
 		return context;
 	}
 	public int getCollisions(){
-		
 		return this.num_collisions;
 	}
+	
 
 }

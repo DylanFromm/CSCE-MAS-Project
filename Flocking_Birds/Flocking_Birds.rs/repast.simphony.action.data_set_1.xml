@@ -1,0 +1,31 @@
+<repast.simphony.data2.engine.DataSetDescriptor>
+  <name>Birds Eaten</name>
+  <type>AGGREGATE</type>
+  <inclTick>true</inclTick>
+  <inclBatchRun>false</inclBatchRun>
+  <inclRandomSeed>false</inclRandomSeed>
+  <scheduleParams>
+    <start>1.0</start>
+    <interval>999.0</interval>
+    <priority>Infinity</priority>
+    <pType>FIRST</pType>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+    <hashCode>-808148704</hashCode>
+  </scheduleParams>
+  <atEnd>false</atEnd>
+  <methodDataSources class="linked-hash-map">
+    <entry>
+      <string>Number of Birds Eaten</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Number of Birds Eaten</id>
+        <className>flocking_Birds.Predator_Bird</className>
+        <methodName>getEaten</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+  </methodDataSources>
+  <countSources class="linked-hash-map"/>
+  <customNADataSources class="linked-hash-map"/>
+  <customAggDataSources class="linked-hash-map"/>
+</repast.simphony.data2.engine.DataSetDescriptor>

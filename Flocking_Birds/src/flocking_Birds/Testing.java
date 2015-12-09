@@ -7,6 +7,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.essentials.RepastEssentials;
@@ -14,6 +15,7 @@ import repast.simphony.query.space.grid.MooreQuery;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
+import repast.simphony.util.ContextUtils;
 
 public class Testing {
 
@@ -26,6 +28,10 @@ public class Testing {
 	private ArrayList<Food> fdSet = new ArrayList<Food>();
 	private Logger logger = Logger.getLogger("MyLog");  
     private FileHandler fh;
+    private boolean obs_encountered = false;
+    private boolean after_obs = false;
+    private double ob_start = 0;
+
 	
 	public Testing(ContinuousSpace<Object> space, Grid<Object> grid, 
 			ArrayList<Smart_Bird> sbSet, ArrayList<Dull_Bird> dbSet,
@@ -78,7 +84,70 @@ public class Testing {
 			}
 		}
 		if(Flocking_Birds_Builder.hypothesis_II){
+			boolean flocked = true;
+			boolean first = true;
+			int flag = 0;
+			boolean obs_status = false;
+			if(!this.obs_encountered){
+				for(Smart_Bird sb : this.sbSet){
+					if(sb.obstacle_spotted){
+						obs_status = true;
+					}
+					if(first){
+						flag = sb.flock_flag;
+						first = false;
+					}else{
+						if(sb.flock_flag != flag){
+							flocked = false;
+						}
+					}
+					
+				}
+				if(flocked){
+					for(Obstacle ob : obSet){
+						ob.turn_on = true;
+					}
+					for(Smart_Bird sb : sbSet){
+						sb.obstacle_on = true;
+					}
+					if(this.ob_start == 0 && obs_status){
+						this.obs_encountered = true;
+						this.ob_start = RepastEssentials.GetTickCount();
+					}
+					
+				}
+				if(obs_status){
+					if(this.ob_start == 0 && obs_status){
+						this.obs_encountered = true;
+						this.ob_start = RepastEssentials.GetTickCount();
+					}
+				}
+			}else{
+				for(Smart_Bird sb : this.sbSet){
+					if(sb.obstacle_spotted){
+						obs_status = true;
+					}
+					if(first){
+						flag = sb.flock_flag;
+						first = false;
+					}else{
+						if(sb.flock_flag != flag){
+							flocked = false;
+						}
+					}
+					
+				}
+				if(flocked){
+					System.out.println("------Birds Converged------");
+					RunEnvironment.getInstance().endRun();
+				}
+				if(RepastEssentials.GetTickCount() - this.ob_start >= 300){
+					System.out.println("------Birds did not converge------");
+					RunEnvironment.getInstance().endRun();
+				}
+			}
 			
+		
 		}
 		if(Flocking_Birds_Builder.hypothesis_III){
 			if(RepastEssentials.GetTickCount() % 1000 == 0){
@@ -114,6 +183,9 @@ public class Testing {
 				}
 			}
 		}
+	}
+	public void setObSet( ArrayList<Obstacle> obSet){
+		this.obSet = obSet;
 	}
 	
 }

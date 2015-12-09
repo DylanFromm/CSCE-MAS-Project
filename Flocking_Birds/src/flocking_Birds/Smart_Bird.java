@@ -29,6 +29,8 @@ public class Smart_Bird {
 	public boolean predator_spotted = false;
 	public boolean predator_clear = true;
 	public boolean food_spotted = false;
+	public boolean obstacle_spotted = false;
+	public boolean obstacle_on = false;
 	
 	private int tick = 1;
 	
@@ -104,47 +106,63 @@ public class Smart_Bird {
 			
 		}
 		if(Flocking_Birds_Builder.spawn_obstacles){
-			MooreQuery<Obstacle> obsquery = new MooreQuery(grid, this, 6, 6);
-			Iterator<Obstacle> oiter = obsquery.query().iterator();
-			ArrayList<Obstacle> obsSet = new ArrayList<Obstacle>();
-			while(oiter.hasNext()){
-				Object obj = oiter.next();
-				if(obj instanceof Obstacle){
-					obsSet.add((Obstacle) obj);
-				}
-			}
-			SimUtilities.shuffle(obsSet, RandomHelper.getUniform());
-			NdPoint thisLoc = space.getLocation(this);
-			if(!obsSet.isEmpty()){
-				if(this.angle > Math.PI && this.angle <= 2*Math.PI){
-					this.angle = -1*(this.angle - Math.PI);
-				}
-				
-				for(Obstacle ob : obsSet){
-					NdPoint obLoc = space.getLocation(ob);
-					//get angle from the object to the bird.
-					double angleto = SpatialMath.calcAngleFor2DMovement(space, thisLoc, obLoc);
-					if(IsWithin(angleto+0.34906588779848602, angleto-0.34906588779848602, this.angle)){
-						double dist1 = Math.hypot(thisLoc.getX() - Math.cos(angleto+0.34906588779848602), thisLoc.getY() - Math.sin(angleto+0.34906588779848602));
-						double dist2 = Math.hypot(thisLoc.getX() - Math.cos(angleto-0.34906588779848602), thisLoc.getY() - Math.sin(angleto-0.34906588779848602));
-						if(dist1 <= dist2){
-							this.angle += 4*0.34906588779848602;
-						}else{
-							this.angle -= 4*0.34906588779848602;
-						}
+			if(obstacle_on){
+				MooreQuery<Obstacle> obsquery = new MooreQuery(grid, this, 6, 6);
+				Iterator<Obstacle> oiter = obsquery.query().iterator();
+				ArrayList<Obstacle> obsSet = new ArrayList<Obstacle>();
+				while(oiter.hasNext()){
+					Object obj = oiter.next();
+					if(obj instanceof Obstacle){
+						obsSet.add((Obstacle) obj);
 					}
-					Av = Alignment(sbSet);
-					Cv = Cohesion(sbSet);
-					Separation(sbSet);
-					this.angle = Math.atan2((Math.sin(Av) + Math.sin(this.angle) +  Math.sin(Cv))/3,
-								(Math.cos(Av) + Math.cos(Cv) + Math.cos(this.angle))/3);
-					move();
-					
 				}
-			
+				SimUtilities.shuffle(obsSet, RandomHelper.getUniform());
+				NdPoint thisLoc = space.getLocation(this);
+				if(!obsSet.isEmpty()){
+					this.flock_flag = RandomHelper.nextIntFromTo(1,200);
+					
+					if(this.angle > Math.PI && this.angle <= 2*Math.PI){
+						this.angle = -1*(this.angle - Math.PI);
+					}
+					
+					for(Obstacle ob : obsSet){
+						this.obstacle_spotted = true;
+						NdPoint obLoc = space.getLocation(ob);
+						//get angle from the object to the bird.
+						double angleto = SpatialMath.calcAngleFor2DMovement(space, thisLoc, obLoc);
+						if(IsWithin(angleto+0.34906588779848602, angleto-0.34906588779848602, this.angle)){
+							
+							double dist1 = Math.hypot(thisLoc.getX() - Math.cos(angleto+0.34906588779848602), thisLoc.getY() - Math.sin(angleto+0.34906588779848602));
+							double dist2 = Math.hypot(thisLoc.getX() - Math.cos(angleto-0.34906588779848602), thisLoc.getY() - Math.sin(angleto-0.34906588779848602));
+							if(dist1 <= dist2){
+								this.angle += 4*0.34906588779848602;
+							}else{
+								this.angle -= 4*0.34906588779848602;
+							}
+						}
+						Av = Alignment(sbSet);
+						Cv = Cohesion(sbSet);
+						Separation(sbSet);
+						this.angle = Math.atan2((Math.sin(Av) + Math.sin(this.angle) +  Math.sin(Cv))/3,
+									(Math.cos(Av) + Math.cos(Cv) + Math.cos(this.angle))/3);
+						move();
+						
+					}
 				
-				
-				
+					
+					
+					
+				}else{
+					this.obstacle_spotted = false;
+					move();
+					if(!sbSet.isEmpty()){
+						Av = Alignment(sbSet);
+						Cv = Cohesion(sbSet);
+						Separation(sbSet);
+						this.angle = Math.atan2((Math.sin(Av) +  Math.sin(Cv))/2,
+									(Math.cos(Av) + Math.cos(Cv))/2);
+					}
+				}
 			}else{
 				move();
 				if(!sbSet.isEmpty()){
@@ -367,4 +385,5 @@ public class Smart_Bird {
 			sb.flock_flag = this.flock_flag;
 		}
 	}
+
 }
