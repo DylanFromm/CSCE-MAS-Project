@@ -50,7 +50,7 @@ public class Testing {
 			try {  
 
 		        // This block configure the logger with handler and formatter  
-		        fh = new FileHandler("C:/Users/Dylan/Desktop/hw/Multi Agent Systems/PredatorBirds.log");  
+		        fh = new FileHandler("PredatorBirds.log");  
 		        logger.addHandler(fh);
 		        SimpleFormatter formatter = new SimpleFormatter();  
 		        fh.setFormatter(formatter);  
